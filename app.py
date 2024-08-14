@@ -24,12 +24,14 @@ def predict():
 @app.route('/data', methods=['POST'])
 def save_data():
     global stored_data
-    stored_data = request.json  # Simpan data JSON yang diterima
+    data = request.json
+    input_data = np.array(data['input'], dtype=np.float32)  # Convert input data to numpy array
+    stored_data = {'input': input_data.tolist()}  # Store as list for consistency
     return jsonify({'message': 'Data received successfully!'})
 
 @app.route('/ambil', methods=['GET'])
 def get_data():
-    return jsonify(stored_data)  # Kirim data yang udah disimpan
+    return jsonify(stored_data)  # Send stored data as JSON
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
