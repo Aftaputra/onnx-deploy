@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import onnxruntime as ort
 import numpy as np
 from datetime import datetime
-import requests  
+import requests  # Impor requests untuk mengirimkan data ke endpoint lain
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ predicted_data = {}
 
 def get_timestamp():
     # Get the current timestamp in ISO format
-    return datetime.now().isoformat()
+    return datetime.now().strftime('%A, %d %B, %H.%M (GMT+7)')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -41,7 +41,7 @@ def save_data():
         timestamp = get_timestamp()
         stored_data[timestamp] = data
         
-        # Pass data to /predict
+        # Pass data to /predict and get the result
         response = requests.post('http://onnx-deploy.onrender.com/predict', json={'input': data['input']})
         result = response.json()
         
