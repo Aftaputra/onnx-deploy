@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import onnxruntime as ort
 import numpy as np
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -24,14 +25,14 @@ def predict():
 @app.route('/data', methods=['POST'])
 def save_data():
     global stored_data
-    data = request.json
-    input_data = np.array(data['input'], dtype=np.float32)  # Convert input data to numpy array
-    stored_data = {'input': input_data.tolist()}  # Store as list for consistency
-    return jsonify({'message': 'Data received successfully!'})
+    data = request.json  # Save received JSON data
+    timestamp = datetime.now().isoformat()  # Get the current timestamp
+    stored_data[timestamp] = data
+    return jsonify({'message': 'Data received successfully!', 'timestamp': timestamp})
 
 @app.route('/ambil', methods=['GET'])
 def get_data():
-    return jsonify(stored_data)  # Send stored data as JSON
+    return jsonify(stored_data)  # Send stored data
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
